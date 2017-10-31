@@ -50,8 +50,14 @@ while game.alive_players.count > 1
     puts game.state
     puts ""
     print 'Who gets a strike: '
-    game.add_strike_to_player(gets.chomp)
+    player = game.add_strike_to_player(gets.chomp)
+    if player && !player.alive?
+      puts ""
+      puts "     >>>>>>>>> #{player.name} has been eliminated. <<<<<<<<<"
+      puts ""
+    end
   end
+  puts "Players still alive:"
   puts game.alive_players_state
   puts ""
   puts "---------------------------------"

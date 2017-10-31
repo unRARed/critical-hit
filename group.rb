@@ -7,12 +7,16 @@ class Group
   end
 
   def add_strike_to_player(player_name)
+    player = nil
     @players.each do |p|
       if p.name == player_name
+        player = p
         p.add_strike
         @resolved = true
+        break
       end
     end
+    player
   end
 
   def player_names

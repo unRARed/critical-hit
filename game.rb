@@ -11,9 +11,6 @@ class Game
     @round = 0
     @groups = []
     @players = players
-    #@players[3].add_bye
-    #@players[3].add_bye
-    #@players[5].add_bye
   end
 
   def state
@@ -38,7 +35,7 @@ class Game
     # handle odd number of players
     players_to_sit = sorted_players.count % @options[:group_size]
 
-    if players_to_sit && alive_players.count > @options[:group_size]
+    if players_to_sit != 0 && alive_players.count > @options[:group_size]
       puts ""
       puts "Players whom will sit this round: "
       puts ""
@@ -61,7 +58,14 @@ class Game
   end
 
   def add_strike_to_player(player_name)
-    @groups.each{|g| g.add_strike_to_player(player_name) if !g.resolved? }
+    player = nil
+    @groups.each do |g|
+      if !g.resolved?
+        player = g.add_strike_to_player(player_name)
+        break if player
+      end
+    end
+    player
   end
 
   def unresolved_groups?
