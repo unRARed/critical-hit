@@ -5,7 +5,7 @@ class Game
 
   def initialize(players, options={})
     @options = {
-      group_size: 3
+      group_size: 4
     }.merge(options)
 
     @round = 0
@@ -16,7 +16,7 @@ class Game
   def state
     state = ''
     @groups.each_with_index do |g, i|
-      state << "Group #{i+1}: [#{g.player_names}]" if !g.resolved?
+      state << "Group #{i+1}: #{g.state}" if !g.resolved?
       state << "\n" if i != @groups.count - 1
     end
     state
@@ -79,7 +79,7 @@ class Game
   def alive_players_state
     state = ""
     self.alive_players.each_with_index do |p, i|
-      state << "#{p.name} - #{p.strikes_remaining} Strikes Remaining\n"
+      state << "#{p.name} => #{p.strikes_remaining} Strikes Remaining, #{p.byes} Byes\n"
     end
     state
   end

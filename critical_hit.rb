@@ -3,8 +3,6 @@ require './player.rb'
 require './group.rb'
 #require 'byebug'
 
-GROUP_SIZE = 3
-
 players = []
 groups = []
 
@@ -51,12 +49,16 @@ while game.alive_players.count > 1
     puts ""
     print 'Who gets a strike: '
     player = game.add_strike_to_player(gets.chomp)
+    puts ""
     if player && !player.alive?
       puts ""
       puts "     >>>>>>>>> #{player.name} has been eliminated. <<<<<<<<<"
       puts ""
     end
   end
+  puts ""
+  puts "---------------------------------"
+  puts ""
   puts "Players still alive:"
   puts game.alive_players_state
   puts ""
