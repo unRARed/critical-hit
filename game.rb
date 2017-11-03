@@ -16,10 +16,29 @@ class Game
   def state
     state = ''
     @groups.each_with_index do |g, i|
-      state << "Group #{i+1}: #{g.state}" if !g.resolved?
+      state << "Group ID #{g.id}: #{g.state}" if !g.resolved?
       state << "\n" if i != @groups.count - 1
     end
     state
+  end
+
+  def move_player(player_name, group_id)
+    group = nil
+    player = nil
+    # ensure we have a real destination group
+    @groups.each do|g|
+      group = g if g.id == group_id.to_i
+    end
+
+    if group
+      @groups.each do |g|
+        player = g.take_player(player_name)
+        break if player
+      end
+      group.give_player(player)
+    else
+      false
+    end
   end
 
   def start_round

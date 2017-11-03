@@ -43,6 +43,26 @@ while game.alive_players.count > 1
   puts "Round #{game.round}"
   puts ""
 
+  # Prompt for group manipulation
+  loop do
+    puts game.state
+    puts ""
+    print 'Anyone need to move from their group? (y/n): '
+    groups_are_good = gets.chomp.downcase != 'y'
+    puts ""
+    break if groups_are_good
+    print 'Type the name of the player to move: '
+    moving_player_name = gets.chomp
+    print 'Which group is this player moving to? (1, 2, 3, etc.): '
+    destination_group_id = gets.chomp
+    unless game.move_player(moving_player_name,
+                       destination_group_id)
+      puts ""
+      puts 'Either the player or the group was not found. Please try again.'
+      puts ""
+    end
+  end
+
   # Prompt for player getting a strike
   while game.unresolved_groups?
     puts game.state
@@ -60,13 +80,14 @@ while game.alive_players.count > 1
   puts "---------------------------------"
   puts ""
   puts "Players still alive:"
+  puts "____________________________________"
   puts game.alive_players_state
   puts ""
   puts "---------------------------------"
 end
 
 puts ""
-puts "#{game.alive_players.first.name} wins the Critical Hit Tournament!"
+puts "     >>>>>>>>> #{game.alive_players.first.name} wins the Tournament! <<<<<<<<<"
 puts ""
 
 exit 1

@@ -1,7 +1,11 @@
 class Group
-  attr_reader :players
+  @@instance_count = 0
+  attr_reader :players,
+              :id
 
   def initialize(players)
+    @@instance_count += 1
+    @id = @@instance_count
     @players = players
     @players_receiving_strike = []
   end
@@ -22,6 +26,21 @@ class Group
 
   def state
    "[#{self.player_names}]"
+  end
+
+  def take_player(name)
+    player = nil
+    @players.each_with_index do |p, i|
+      if p.name == name
+        player = @players.slice!(i)
+        break
+      end
+    end
+    player
+  end
+
+  def give_player(player)
+    @players << player
   end
 
   def player_names
