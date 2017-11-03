@@ -1,6 +1,10 @@
 class Game
+  IDEAL_GROUP_SIZE = 4
+  CONDITIONAL_GROUP_SIZE = 3
+
   attr_reader :groups,
               :players,
+              :byes,
               :round
 
   def initialize(players, options={})
@@ -13,6 +17,14 @@ class Game
     @players = players
   end
 
+  def byes
+    @players.inject(0) {|sum, p| sum + p.byes }
+  end
+
+  def strikes_remaining
+    @players.inject(0) {|sum, p| sum + p.strikes_remaining }
+  end
+
   def state
     state = ''
     @groups.each_with_index do |g, i|
@@ -22,12 +34,26 @@ class Game
     state
   end
 
+  def get_players_group_id(player_name)
+    group = nil
+    @groups.each do |g|
+      if g.players.any?{|p| p.name == player_name }
+        group = g
+        break
+      end
+    end
+    group.id
+  end
+
   def move_player(player_name, group_id)
     group = nil
     player = nil
     # ensure we have a real destination group
     @groups.each do|g|
-      group = g if g.id == group_id.to_i
+      if g.id == group_id.to_i
+        group = g
+        break
+      end
     end
 
     if group
@@ -52,9 +78,12 @@ class Game
     sorted_players = self.alive_players.shuffle.sort_by{ |p| -p.byes }
 
     # handle odd number of players
-    players_to_sit = sorted_players.count % @options[:group_size]
+    players_to_sit = sorted_players.count % IDEAL_GROUP_SIZE
+    if players_to_sit >= CONDITIONAL_GROUP_SIZE
+      players_to_sit = players_to_sit - CONDITIONAL_GROUP_SIZE
+    end
 
-    if players_to_sit != 0 && alive_players.count > @options[:group_size]
+    if players_to_sit != 0 && alive_players.count > IDEAL_GROUP_SIZE
       puts ""
       puts "Players whom will sit this round: "
       puts ""
@@ -67,8 +96,7 @@ class Game
       sorted_players = sorted_players[0..-(players_to_sit+1)]
     end
 
-    player_blocks = sorted_players.shuffle.each_slice(@options[:group_size])
-
+    player_blocks = sorted_players.shuffle.each_slice(IDEAL_GROUP_SIZE)
     # remaining 1 or 2 players sit this one out
     # and receive a "bye"
     player_blocks.each do |player_block|
